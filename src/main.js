@@ -1,3 +1,5 @@
+'use strict';
+
 /* ************************************************************************* */
 const menuMarkup = `
 <input
@@ -40,7 +42,7 @@ const searchMarkup = `
 `;
 
 /* ************************************************************************* */
-const filterMarkup= `
+const filterMarkup = `
 <input
   type="radio"
   id="filter__all"
@@ -289,17 +291,16 @@ const getMarkup = (blockName) => {
     case `card-form`: result = cardFormMarkup; break;
     case `load-more`: result = loadMoreMarkup; break;
 
-    default: throw new Error (`getMarkup: markup not found.`);
+    default: throw new Error(`getMarkup: markup not found.`);
   }
 
   return result;
-}
+};
 
 const doRender = (containerElement, markup) => {
-  console.log(containerElement);
-
+  // console.log(containerElement);
   containerElement.innerHTML = markup;
-}
+};
 
 const mainElement = document.querySelector(`.main`);
 const mainControlElement = mainElement.querySelector(`.main__control .control__btn-wrap`);
@@ -329,10 +330,10 @@ doRender(card4, getMarkup(`card`));
 const boardElement = document.querySelector(`.board`);
 
 const createElementFromHTML = (htmlString) => {
-  const div = document.createElement('div');
+  const div = document.createElement(`div`);
   div.innerHTML = htmlString.trim();
   return div.firstChild;
-}
+};
 
 const btnLoadMore = createElementFromHTML(`<button class="load-more" type="button">load more</button>`);
 
@@ -344,4 +345,3 @@ boardTasksElement.appendChild(card1);
 boardTasksElement.appendChild(card2);
 boardTasksElement.appendChild(card3);
 boardTasksElement.appendChild(card4);
-
