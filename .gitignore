@@ -14,3 +14,4 @@ node_modules/
 # собранные файлы проекта
 build/
 public/bundle.js
+public/bundle.js.map
