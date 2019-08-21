@@ -3,30 +3,69 @@ import {createSearchTemplate} from "./components/search.js";
 import {createFilterTemplate} from "./components/filter.js";
 import {createBoardTemplate} from "./components/board.js";
 import {createSortingTemplate} from "./components/sorting.js";
-import {createTaskTemplate} from "./components/task.js";
-import {createTaskEditTemplate} from "./components/task-edit.js";
 import {createLoadMoreBtnTemplate} from "./components/load-more-btn.js";
+
+import Task from "./components/task.js";
+import TaskEdit from "./components/task-edit.js";
 
 import {getTask} from "./data.js";
 import {createFiltersData} from "./filters-data.js";
 
-const tasks = new Array(17).fill(``).map(() => getTask());
-const filtersData = createFiltersData(tasks);
+import {Position, render as renderNew} from "./utils.js";
 
+const TASK_COUNT = 10;
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
+const renderTask = (taskMock, tasksContainer) => {
+  const task = new Task(taskMock);
+  const taskEdit = new TaskEdit(taskMock);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  task.getElement()
+    .querySelector(`.card__btn--edit`)
+    .addEventListener(`click`, () => {
+      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement().querySelector(`textarea`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  taskEdit.getElement()
+    .querySelector(`.card__save`)
+    .addEventListener(`click`, () => {
+      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  renderNew(tasksContainer, task.getElement(), Position.BEFOREEND);
+};
+
+const taskMocks = new Array(TASK_COUNT).fill(``).map(() => getTask());
+const filtersData = createFiltersData(taskMocks);
+
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
 render(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
-
 render(siteMainElement, createSearchTemplate(), `beforeend`);
-
 render(siteMainElement, createFilterTemplate(filtersData), `beforeend`);
-
 render(siteMainElement, createBoardTemplate(), `beforeend`);
 
 const boardElement = siteMainElement.querySelector(`.board`);
@@ -43,19 +82,17 @@ const loadMore = (taskCount) => {
   let currentTaskIndex = tasksAlreadyShown;
   const stopTaskIndex = tasksAlreadyShown + taskCount;
 
-  while (currentTaskIndex < tasks.length && currentTaskIndex < stopTaskIndex) {
-    render(boardTasksElement, createTaskTemplate(tasks[currentTaskIndex]), `beforeend`);
+  while (currentTaskIndex < taskMocks.length && currentTaskIndex < stopTaskIndex) {
+    renderTask(taskMocks[currentTaskIndex], boardTasksElement);
     currentTaskIndex++;
   }
 
-  if (currentTaskIndex >= tasks.length) {
+  if (currentTaskIndex >= taskMocks.length) {
     loadMoreBtnElement.remove();
   }
 };
 
-render(boardTasksElement, createTaskEditTemplate(tasks[0]), `beforeend`);
-loadMore(7);
-
+loadMore(8);
 
 loadMoreBtnElement.addEventListener(`click`, () => {
   loadMore(8);
