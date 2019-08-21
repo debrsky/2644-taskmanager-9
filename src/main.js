@@ -33,7 +33,7 @@ const renderTask = (taskMock, tasksContainer) => {
   task.getElement()
     .querySelector(`.card__btn--edit`)
     .addEventListener(`click`, () => {
-      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+      task.getElement().replaceWith(taskEdit.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -50,7 +50,7 @@ const renderTask = (taskMock, tasksContainer) => {
   taskEdit.getElement()
     .querySelector(`.card__save`)
     .addEventListener(`click`, () => {
-      tasksContainer.replaceChild(task.getElement(), taskEdit.getElement());
+      taskEdit.getElement().replaceWith(task.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
     });
 
